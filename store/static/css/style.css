@@ -1,0 +1,188 @@
+#category {
+  position: fixed;
+}
+
+#pbase {
+  background-color: rgb(231, 199, 204);
+}
+
+.pbase {
+  padding: 20px;
+}
+
+.increment:hover {
+  background-color: gray;
+  cursor: pointer;
+}
+
+.decrement:hover {
+  background-color: gray;
+  cursor: pointer;
+}
+
+.detail {
+  margin: 10px;
+  text-shadow: 50vh;
+  color: gray;
+}
+
+.bill {
+  margin: 10px;
+  padding: 10px;
+}
+
+.item-del {
+  color: red;
+}
+
+#place-order {
+  background-color: orange;
+}
+
+.cdetail {
+  float: right;
+}
+
+.address {
+  padding: 50px;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+#address-error,
+#mobile-error,
+#state-error,
+#zip-error,
+#city-error {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.summary {
+  padding: 10px;
+  text-shadow: 50vh;
+  color: gray;
+}
+
+.summary-div {
+  margin: 20px;
+  padding: 5px;
+}
+
+.order-div {
+  margin: 20px;
+  padding: 5px;
+}
+
+.sum {
+  margin: 15px;
+}
+
+.e-sum {
+  margin-bottom: 15px;
+}
+
+.order {
+  padding: 20px;
+  background-color: rgb(240, 232, 232);
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.order-top {
+  color: gray;
+}
+
+.order-image {
+  margin: 10px;
+  padding: 10px;
+  border: .01px solid #c2bcbc;
+  text-align: center;
+  border-radius: 3px;
+}
+
+.orderline {
+  padding-left: 30px;
+}
+
+#orderline-desc {
+  color: gray;
+}
+
+.order-info {
+  position: relative;
+}
+
+.info-div {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#ol-qty {
+  color: gray;
+}
+
+.line {
+  opacity: 10%;
+}
+
+.order-sum {
+  color: gray;
+}
+
+.sum-span {
+  float: right;
+}
+
+#status {
+  float: right;
+  color: green;
+}
+
+#wishlist-cart {
+  background-color: orange;
+}
+
+.wishlist-font {
+  font-size: larger;
+}
+
+.wish-alert {
+  display: none;
+}
+
+.category-btn {
+  cursor: pointer;
+  color: gray;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.category-btn:hover {
+  background-color: rgb(247, 228, 231);
+}
+
+.item-div {
+  background-color: rgb(247, 228, 231);
+}
+
+
+#sandeep {
+  background-color: pink;
+}
+
+.footer {
+  background-color: orange;
+}
+
+.added {
+  background-color: rgb(12, 150, 12);
+}
+
+/* 
+#tomar {
+  position: relative;
+}
+
+#tomar1 {
+  display: inline-block;
+  position: fixed;
+} */

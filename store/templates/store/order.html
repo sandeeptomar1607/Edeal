@@ -1,0 +1,51 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container order-div">
+    {% for order, orderlines in result.items %}
+
+    <div class="container border rounded order">
+        <h3>Order ID: {{order.order_id}}</h3>
+        <p><span class="order-top">Order Date:</span> {{order.date}} <span class="order-top" id="status">Status: {{order.status}}</span></p>
+        <hr class="line">
+        {% for orderline in orderlines %}
+
+        <div class="row orderline">
+            <div class="col-md-2 order-image">
+                <img src="{{orderline.product.image.url}}" style="height:100px" alt="">
+            </div>
+            <div class="col-md-6 order-info">
+                <div class="info-div">
+                    <p id="orderline-product">{{orderline.product.name}}</p>
+                    <p id="orderline-desc">{{orderline.product.description}}</p>
+                </div>
+            </div>
+            <div class="col-md-3 order-info">
+                <div class="info-div">
+                    <p id="orderline-price">{{orderline.product.price}}</p>
+                    <p id="orderline-qty"><span id="ol-qty">Qty: {{orderline.quantity}}</span></p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <hr class="line">
+
+        <div class="row container">
+            <div class="col">
+                <h5 class="">Billing Address <span></span></h5>
+            </div>
+            <div class="col">
+                <h5 class="">Order Summary <span></span></h5>
+                <p class="order-sum">Subtotal<span class="sum-span">{{order.amount}}</span></p>
+                <p class="order-sum" >Delivery<span class="sum-span">Free</span></p>
+                <p class="order-sum" >Total<span class="sum-span">{{order.amount}}</span></p>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+{% endblock %}

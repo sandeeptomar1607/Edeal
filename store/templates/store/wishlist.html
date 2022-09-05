@@ -1,0 +1,62 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container order-div">
+    <div class="alert alert-success alert-dismissible fade show wish-alert" role="alert">
+        <strong>Item successfully added to the cart...! </strong> 
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% if wishlists %}
+    {% for wishlist in wishlists %}
+
+    <div class="container border rounded wishlist-item order">
+
+        <div class="row orderline">
+            <div class="col-md-2 order-image">
+                <img src="{{wishlist.product.image.url}}" style="height:100px" alt="">
+            </div>
+            <div class="col order-info">
+                <div class="info-div">
+                    <p class="wishlist-font">{{wishlist.product.name}}</p>
+                    <p class="wishlist-font">{{wishlist.product.description}}</p>
+                </div>
+            </div>
+            <div class="col order-info">
+                <div class="info-div">
+                    <p clsas="wishlist-font">{{wishlist.product.price}}</p>
+                </div>
+            </div>
+            <div class="col order-info">
+                <div class="info-div">
+                    <button id="wishlist-cart" data-pid="{{wishlist.product.id}}" class="btn wishlist-cart">Add To Cart</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    {% endfor %}
+ {% else %}
+ <script>    
+    Swal.fire({
+      title: '<strong>Wishlist is Empty</strong>',
+      icon: 'info',
+      html:
+        'Please Add Items !',
+      showCloseButton: true,
+
+      focusConfirm: false,
+     
+      
+    })
+
+    document.querySelector(".swal2-confirm").addEventListener("click", function() {
+      window.location.href='http://127.0.0.1:8000/';
+});
+  </script>
+ {% endif %}
+
+</div>
+{% endblock %}

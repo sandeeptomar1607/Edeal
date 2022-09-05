@@ -1,0 +1,121 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load cart_tag %}
+{% load cart_filter %}
+y
+{% block content %}
+<div class="container-fluid mt-1 " id="sandeep">
+    <div class="row" id="tomar">
+        <div class="col-lg-3 mx-auto" id="tomar1">
+            <div class="list-group">
+                <h5 class="list-group-item category-btn" data-filter="all">All Products</h5>
+                {% for category in categories %}
+                <h6 class="list-group-item category-btn" data-filter="{{category.name}}">
+                    {{category.name}}
+                </h6>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id='products' class="col-lg-9 mx-auto item-div">
+            <div class="row mx-auto">
+
+                {% for product in products %}
+                <div class="card mx-auto mb-3 store-product {{product.category}}" style="width: 15rem;">
+                    <a>
+                        {% if request.user.is_authenticated %}
+                        {% if product|in_wishlist:request.user %}
+
+                        <i class="fa fa-heart wishlist" style="color:red" data-pid="{{product.id}}" data-toggle="tooltip" data-placement="top"
+                        aria-hidden="true" title="Remove from Wishlist"></i>
+                        {% else %}
+                            <i class="fa fa-heart wishlist" data-pid="{{product.id}}" data-toggle="tooltip" data-placement="top"
+                              aria-hidden="true" title="Add to Wishlist"></i>
+                              {% endif %}
+
+                            {% endif %}
+                        <img src="{{product.image.url}}" style="height:150px; width: 150px;" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <p class="card-title target">{{product.name}} </p>
+                            <p class="card-text"><b>$ {{product.price}}</b></p>
+                        </div>
+
+
+                        <div class="footer">
+                            {% if product|in_cart:request.session.cart %}
+                            <div class="added">
+                                <button class="btn form-control" type="button">Added to Cart</button>
+                            </div>
+                            {% else %}
+                            <div class="">
+                                <button class="btn add-to-cart form-control" type="button" data-pid="{{product.id}}">Add
+                                    To Cart</button>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SignUP Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Please SignUP here...!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    {% csrf_token %}
+                    {{form|crispy}}
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="signup">SignUP</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Login Modal -->
+
+<div class="modal fade" id="loginmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Please Login here...!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'store:login' %}" method="POST">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Email:</label>
+                        <input required type="email" name="email" id="recipient-name"
+                            class=" form-control-sm form-control" placeholder="example@gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Password</label>
+                        <input type="password" name="password" id="" class="form-control form-control-sm"
+                            placeholder="********">
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-3">
+                            <input class="btn btn-sm btn-info" type="submit" value="Login">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

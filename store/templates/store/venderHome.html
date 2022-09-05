@@ -1,0 +1,167 @@
+{% extends 'store/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fuild pbase" id="pbase">
+    <div class="text-center">
+        <button type="button" class="btn btn-primary" id="productaddmodal" data-bs-toggle="modal"
+            data-bs-target="#productmodal" data-bs-whatever="@mdo">CLICK HERE to add more products to your Shop</button>
+    </div>
+    <div class="row mt-3">
+
+        {% for product in products %}
+        <div class="col-md-3 mb-5 prodiv">
+
+            <div class="card">
+                <div class="card-header">{{product.name}}<span></div>
+                <img class="card-img-top" src="{{ product.image.url }}" style="height:200px" alt="Product image">
+                <div class="card-body py-0">
+                    <h5 class="card-title">
+                        price:₹{{product.price}}
+                    </h5>
+                </div>
+                <div class="card-footer mt-auto ">
+                    <div>
+                        <i class="fa fa-trash fa-2x i-del" data-pid="{{product.id}}" style='font-size:15px'></i>
+                    </div>
+                    <div>
+                        <i class='fas fa-edit i-edit' data-pid="{{product.id}}" id="proupdate" data-bs-toggle="modal"
+                            data-bs-target="#productupdate" data-bs-whatever="@mdo" style='font-size:15px'></i>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        {% endfor %}
+
+
+        <!-- Add product Modal -->
+        <div class="modal fade" id="productmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Please Add your product...!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="myForm" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="proid" id="proid">
+
+                            <div class="mb-3">
+                                <label for="category" class="col-form-label">Category*</label>
+                                <select name="category" class="form-select form-select-sm"
+                                    aria-label=".form-select-sm example">
+                                    {% for category in categories %}
+                                    <option value="{{category.id}}">{{category.name}}</option>
+                                    {% endfor %}
+                                </select>
+                                <p id="mobile-error" style="display: none;"></p>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="p-name" class="col-form-label">Name*</label>
+                                <input type="text" class="form-control address" name="name" id="p-name"
+                                    placeholder="Product name">
+                                <p id="address-error" style="display: none;"></p>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="price" class="col-form-label">Price*</label>
+                                <input type="text" class="form-control address" name="price" id="price"
+                                    placeholder="Price">
+                                <p id="city-error" style="display: none;"></p>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="desc" class="col-form-label">Description*</label>
+                                <textarea type="text" class="form-control address" name="desc" id="desc"
+                                    placeholder="Desciption"></textarea>
+                                <p id="state-error" style="display: none;"></p>
+                            </div>
+                            <div class="mb-3">
+                                <label for="p-image" class="col-form-label">Image*</label>
+                                <input type="file" id="myFile" name="p-image">
+
+                                <p id="zip-error" style="display: none;"></p>
+                            </div>
+
+                            <!-- {{form|crispy}} -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" id="addproduct">ADD</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Update product Modal -->
+        <div class="modal fade" id="productupdate" tabindex="-1" aria-labelledby="" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Please Update your product...!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="myForm" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="proid" id="proid">
+
+                            <div class="mb-3">
+                                <label for="pro-category" class="col-form-label">Category*</label>
+                                <select name="pro-category" id="pro-category" class="form-select form-select-sm"
+                                    aria-label=".form-select-sm example">
+                                    {% for category in categories %}
+                                    <option value="{{category.id}}">{{category.name}}</option>
+                                    {% endfor %}
+                                </select>
+                                <p id="mobile-error" style="display: none;"></p>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="p-name" class="col-form-label">Name*</label>
+                                <input type="text" class="form-control address" name="p-name" id="pro-name"
+                                    placeholder="Product name" value="sandeep">
+                                <p id="address-error" style="display: none;"></p>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="price" class="col-form-label">Price*</label>
+                                <input type="text" class="form-control address" name="price" id="pro-price"
+                                    placeholder="Price">
+                                <p id="city-error" style="display: none;"></p>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="desc" class="col-form-label">Description*</label>
+                                <textarea type="text" class="form-control address" name="desc" id="pro-desc"
+                                    placeholder="Desciption"></textarea>
+                                <p id="state-error" style="display: none;"></p>
+                            </div>
+                            <div class="mb-3">
+                                <label for="p-image" class="col-form-label">Image*</label>
+                                <input type="file" id="myFile" name="pro-image">
+
+                                <p id="zip-error" style="display: none;"></p>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" id="addproduct">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

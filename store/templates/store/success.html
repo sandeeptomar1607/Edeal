@@ -1,0 +1,20 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <section class="content-box">
+        <script>
+            Swal.fire(
+                'Placed!',
+                'Your order has been placed!',
+                'success'
+            )
+            
+            document.querySelector(".swal2-confirm").addEventListener("click", function () {
+                window.location.href = 'http://127.0.0.1:8000/';
+            });
+        </script>
+    </section>
+</div>
+{% endblock %}
