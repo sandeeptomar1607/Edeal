@@ -6,6 +6,29 @@ from store.models import Wishlist
 register = template.Library()
 
 
+@register.filter(name="in_electronics")
+def in_electronics(sub_category):
+    
+    if sub_category.category.name == 'Electronics':
+        return True
+    else:
+        return False
+
+@register.filter(name="in_Beauty")
+def in_Beauty(sub_category):
+    if sub_category.category.name == 'Beauty,Toy & More':
+        return True
+    else:
+        return False
+
+
+@register.filter(name="in_home")
+def in_home(sub_category):
+    if sub_category.category.name == 'Home':
+        return True
+    else:
+        return False 
+
 @register.filter(name="in_cart")
 def in_cart(product, cart):
     keys = cart.keys()

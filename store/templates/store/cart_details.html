@@ -1,0 +1,156 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load cart_tag %}
+{% load cart_filter %}
+
+{% block content %}
+
+{% if request.session.cart %}
+<div class="container-fluid">
+    <div id="cart-item">
+        <p id="flipkart">E-Deal ({{request.session.cart|cart_quantity}})</p>
+        {% for key,value in request.session.cart.items %}
+
+        <div class="row border p-4 cart-div">
+            <div class="col-md-3 cart-img-div">
+                <img class="cart-img p-2" src="{{value.image}}">
+                <div class="container row">
+                    <div class="col-sm-4 decrement border rounded-circle" data-pid="{{value.product_id}}">-</div>
+                    <div class="col-sm-4 quantity border text-center">{{value.quantity}}</div>
+                    <div class="col-sm-4 increment border rounded-circle " data-pid="{{value.product_id}}">+</div>
+
+                </div>
+            </div>
+            <div class="col-md-7 cp-detail">
+                <h5 class="e-font">{{value.name}}</h5>
+                <h6 class="e-font cp-price">Price: {{value.price}} </h6>
+                <div>
+                    <h5 class="e-font total" data-pid="{{value.product_id}}"> Total: ₹
+                        {{ value.price|multiply:value.quantity }}
+                    </h5>
+
+                </div>
+                <div class="cp-remove">
+                    <i class="fa fa-trash fa-2x item-del" data-pid="{{value.product_id}}" aria-hidden="true">
+                        REMOVE</i>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="po-div">
+            <p id="place-order" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">PLACE
+                ORDER</p>
+        </div>
+    </div>
+    <div id="p-details">
+        <p id="detail"><b>PRICE DETAILS</b></p>
+        <hr>
+        <div id="price-details">
+            <h6 class="bill">Total Product <span class="cdetail">{{request.session.cart|cart_quantity}}</span></h6>
+            <h6 class="bill">Delivery Charges<span class="cdetail" id="dc">FREE</span></h6>
+            <h6 class="bill">Secured Packaging Fee<span class="cdetail">Free</span></h6>
+            <hr>
+            <h5 class="bill">Total Amount <span class="cdetail" id="amount">{{cart_amount}}</span></h5>
+            <hr>
+        </div>
+
+    </div>
+    <div id="safe">
+        <i class="fa fa-shield" aria-hidden="true">
+            Safe and Secure Payments.Easy returns.100% Authentic products.</i>
+    </div>
+</div>
+
+{% else %}
+<script>    
+    Swal.fire({
+      title: '<strong>Cart is Empty</strong>',
+      icon: 'info',
+      html:
+        'Please Add Items !',
+      showCloseButton: true,
+
+      focusConfirm: false,
+     
+      
+    })
+
+    document.querySelector(".swal2-confirm").addEventListener("click", function() {
+      window.location.href='http://127.0.0.1:8000/';
+});
+  </script>
+  {% endif %}
+
+
+<!-- Address Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Address</h5>
+            </div>
+            <div class="modal-body e-font">
+                <form action="{% url 'store:payment' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" id="cart-discount" name="discount" value="0">
+                    <div class="mb-3">
+                        <label for="coupon" class="col-form-label coupon-h"><b>Apply Coupon</b></label>
+                        <select class="form-select sel-coupon" aria-label="Default select example">
+                            <option selected>None</option>
+                            {% for coupon in coupons %}
+                            <option value="{{coupon.id}}"><span class="c-code">{{coupon.coupon_code}}</span><span
+                                    class="c-desc">
+                                    {{coupon.description}}</span></option>
+                            {% endfor %}
+                        </select>
+                        <div id="apply">
+                            <i class="fa fa-check-circle apply" aria-hidden="true">Applied</i>
+                        </div>
+                        <div id="not-apply">
+                            <p>Coupon not applicable !</p>
+                        </div>
+
+                    </div>
+                    <div class="mb-3">
+                        <label for="mobile-number" class="col-form-label">Mobile Number*</label>
+                        <input type="text" class="form-control address" name="mobile" id="mobile-number"
+                            placeholder="Mobile">
+                        <p id="mobile-error" style="display: none;"></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="address" class="col-form-label">Address*</label>
+                        <input type="text" class="form-control address" name="address" id="address"
+                            placeholder="House No. / street">
+                        <p id="address-error" style="display: none;"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="city" class="col-form-label">City*</label>
+                        <input type="text" class="form-control address" name="city" id="city" placeholder="City">
+                        <p id="city-error" style="display: none;"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="state" class="col-form-label">State*</label>
+                            <input type="text" class="form-control address" name="state" id="state" placeholder="State">
+                            <p id="state-error" style="display: none;"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="zip-code" class="col-form-label">Zip Code*</label>
+                            <input type="text" class="form-control address" name="zip_code" id="zip-code"
+                                placeholder="Zip Code">
+                            <p id="zip-error" style="display: none;"></p>
+                        </div>
+                    </div>
+                    <div class="po-div">
+                        <button type="submit" id="proceed-to-pay">CONTINUE
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

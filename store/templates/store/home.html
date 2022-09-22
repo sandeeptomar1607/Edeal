@@ -3,10 +3,325 @@
 {% load crispy_forms_tags %}
 {% load cart_tag %}
 {% load cart_filter %}
-y
+
 {% block content %}
-<div class="container-fluid mt-1 " id="sandeep">
-    <div class="row" id="tomar">
+
+
+<div class="container-fluid">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="mt-2 alert alert-{{ message.tags }} e-font e-tag">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    <div class="row">
+        {% for category in categories %}
+
+        <div class="col cat-image">
+            <a href="/?category={{category.id}}" class="a-link">
+                <img src="{{category.image.url}}" class="cart-image">
+                <h6 class="e-font mt-2">{{category.name}}</h6>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- <hr class="line"> -->
+
+    <div class="cover">
+
+        <div class="row border m-1 scroll-images" id="sub-cat">
+            <h4 class="m-4 e-font">
+                Best of Electronics
+            </h4>
+            <hr class="line">
+
+            <button class="col-md-1 left" data-id="1" onclick=""> <i class="fas fa-angle-double-left"></i>
+            </button>
+            {% for sub_category in sub_categories %}
+            {% if sub_category|in_electronics %}
+            <div class="col sub-cat">
+                <a href="/?sub_cat={{sub_category.id}}" class="sc-link">
+                    <img src="{{sub_category.image.url}}" class="sub-image">
+                    <h6 class="e-font mt-3"><strong>{{sub_category.name}}</strong></h6>
+                </a>
+            </div>
+            {% endif %}
+            {% endfor %}
+            <button class="col-md-1 right" onclick=""> <i class="fas fa-angle-double-right"></i>
+            </button>
+        </div>
+
+    </div>
+
+
+    <div class="cover">
+        <div class="row border m-1 scroll-images" id="sub-cat">
+            <h4 class="m-4 e-font">
+                Beauty, Food, Toys & more</h4>
+            <hr class="line">
+            <button class="col-md-1 left" data-id="1" onclick=""> <i class="fas fa-angle-double-left"></i>
+            </button>
+            {% for sub_category in sub_categories %}
+            {% if sub_category|in_Beauty %}
+
+            <div class="col sub-cat">
+                <a href="/?sub_cat={{sub_category.id}}" class="sc-link">
+                    <img src="{{sub_category.image.url}}" class="sub-image">
+                    <h6 class="e-font mt-3"><strong>{{sub_category.name}}</strong></h6>
+                </a>
+
+            </div>
+
+            {% endif %}
+            {% endfor %}
+            <button class="col-md-1 right" onclick=""> <i class="fas fa-angle-double-right"></i>
+            </button>
+        </div>
+
+    </div>
+
+    <div class="cover">
+        <div class="row border m-1 scroll-images" id="sub-cat">
+            <h4 class="m-4 e-font">
+                Home & Kichen Essentials </h4>
+            <hr class="line">
+            <button class="col-md-1 left" data-id="1" onclick=""> <i class="fas fa-angle-double-left"></i>
+            </button>
+            {% for sub_category in sub_categories %}
+            {% if sub_category|in_home %}
+
+            <div class="col sub-cat">
+                <a href="/?sub_cat={{sub_category.id}}" class="sc-link">
+                    <img src="{{sub_category.image.url}}" class="sub-image">
+                    <h6 class="e-font mt-3"><strong>{{sub_category.name}}</strong></h6>
+                </a>
+            </div>
+
+            {% endif %}
+            {% endfor %}
+            <button class="col-md-1 right" onclick=""> <i class="fas fa-angle-double-right"></i>
+            </button>
+        </div>
+
+    </div>
+
+
+    <div class="container-fluid mt-5 p-4">
+        <div>
+            <h5 class="e-font f-head">E-Deal: The One-stop Shopping Destination</h5>
+            <p class="f-desc">E-commerce is revolutionizing the way we all shop in India. Why do you want to hop from
+                one store to
+                another in search of the latest phone when you can find it on the Internet in a single click? Not only
+                mobiles. Flipkart houses everything you can possibly imagine, from trending electronics like laptops,
+                tablets, smartphones, and mobile accessories to in-vogue fashion staples like shoes, clothing and
+                lifestyle accessories; from modern furniture like sofa sets, dining tables, and wardrobes to appliances
+                that make your life easy like washing machines, TVs, ACs, mixer grinder juicers and other time-saving
+                kitchen and small appliances; from home furnishings like cushion covers, mattresses and bedsheets to
+                toys and musical instruments, we got them all covered. You name it, and you can stay assured about
+                finding them all here. For those of you with erratic working hours, Flipkart is your best bet. Shop in
+                your PJs, at night or in the wee hours of the morning. This e-commerce never shuts down.
+                <br><br><br>
+                What's more, with our year-round shopping festivals and events, our prices are irresistible. We're sure
+                you'll find yourself picking up more than what you had in mind. If you are wondering why you should shop
+                from Flipkart when there are multiple options available to you, well, the below will answer your
+                question.
+            </p>
+        </div>
+
+        <div>
+            <h5 class="e-font f-head">What Can You Buy From Flipkart?</h5>
+            <div>
+                <h5 class="e-font f-head">Mobile Phones</h5>
+                <p class="f-desc">From budget phones to state-of-the-art smartphones, we have a mobile for everybody out
+                    there. Whether you're looking for larger, fuller screens, power-packed batteries, blazing-fast
+                    processors, beautification apps, high-tech selfie cameras or just large internal space, we take care
+                    of all the essentials. Shop from top brands in the country like Samsung, Apple, Oppo, Xiaomi,
+                    Realme, Vivo, and Honor to name a few. Rest assured, you're buying from only the most reliable names
+                    in the market. What's more, with Flipkart's Complete Mobile Protection Plan, you will never again
+                    find the need to run around service centres. This plan entails you to a number of post-purchase
+                    solutions, starting at as low as Rupees 99 only! Broken screens, liquid damage to phone, hardware
+                    and software glitches, and replacements - the Flipkart Complete Mobile Protection covers a
+                    comprehensive range of post-purchase problems, with door-to-door services.</p>
+            </div>
+
+            <div>
+                <h5 class="e-font f-head">Electronic Devices and Accessories</h5>
+                <p class="f-desc">When it comes to laptops, we are not far behind. Filter among dozens of super-fast
+                    operating systems, hard disk capacity, RAM, lifestyle, screen size and many other criterias for
+                    personalized results in a flash. All you students out there, confused about what laptop to get? Our
+                    Back To College Store segregates laptops purpose wise (gaming, browsing and research, project work,
+                    entertainment, design, multitasking) with recommendations from top brands and industry experts,
+                    facilitating a shopping experience that is quicker and simpler.
+                    <br><br><br>
+                    Photography lovers, you couldn't land at a better page than ours. Cutting-edge DSLR cameras, ever
+                    reliable point-and-shoot cameras, millennial favourite instant cameras or action cameras for
+                    adventure junkies: our range of cameras is as much for beginners as it is for professionals. Canon,
+                    Nikon, GoPro, Sony, and Fujifilm are some big names you'll find in our store. Photography lovers,
+                    you couldn't land at a better page than ours. Cutting-edge DSLR cameras, ever reliable
+                    point-and-shoot cameras, millennial favourite instant cameras or action cameras for adventure
+                    junkies: our range of cameras is as much for beginners as it is for professionals. Canon, Nikon,
+                    GoPro, Sony, and Fujifilm are some big names you'll find in our store.
+                    <br><br><br>
+                    Turn your home into a theatre with a stunning surround sound system. Choose from our elaborate range
+                    of Sony home theatres, JBL soundbars and Philips tower speakers for an experience to remember.
+                    <br><br><br>
+                    How about jazzing up your phone with our quirky designer cases and covers? Our wide-ranging mobile
+                    accessories starting from headphones, power banks, memory cards, mobile chargers, to selfie sticks
+                    can prove to be ideal travel companions for you and your phone; never again worry about running out
+                    of charge or memory on your next vacation.
+                </p>
+            </div>
+
+
+            <div>
+                <h5 class="e-font f-head">Large Appliances</h5>
+                <p class="f-desc">Sleek TVs, power-saving refrigerators, rapid-cooling ACs, resourceful washing machines
+                    - discover everything you need to run a house under one roof. Our Dependable TV and Appliance Store
+                    ensures zero transit damage, with a replacement guarantee if anything goes wrong; delivery and
+                    installation as per your convenience and a double warranty (Official Brand Warranty along with an
+                    extended Flipkart Warranty) - rest assured, value for money is what is promised and delivered. Shop
+                    from market leaders in the country like Samsung, LG, Whirlpool, Midea, Mi, Vu, Panasonic, Godrej,
+                    Sony, Daikin, and Hitachi among many others.</p>
+            </div>
+
+
+            <div>
+                <h5 class="e-font f-head">Small Home Appliances</h5>
+                <p class="f-desc">Find handy and practical home appliances designed to make your life simpler: electric
+                    kettles, OTGs, microwave ovens, sandwich makers, hand blenders, coffee makers, and many more other
+                    time-saving appliances that are truly crafted for a quicker lifestyle. Live life king size with
+                    these appliances at home.</p>
+            </div>
+
+
+            <div>
+                <h5 class="e-font f-head">Lifestyle</h5>
+                <p class="f-desc">Flipkart, 'India ka Fashion Capital', is your one-stop fashion destination for
+                    anything and everything you need to look good. Our exhaustive range of Western and Indian wear,
+                    summer and winter clothing, formal and casual footwear, bridal and artificial jewellery,
+                    long-lasting make-up, grooming tools and accessories are sure to sweep you off your feet. Shop from
+                    crowd favourites like Vero Moda, Forever 21, Only, Arrow, Woodland, Nike, Puma, Revlon, Mac, and
+                    Sephora among dozens of other top-of-the-ladder names. From summer staple maxi dresses, no-nonsense
+                    cigarette pants, traditional Bandhani kurtis to street-smart biker jackets, you can rely on us for a
+                    wardrobe that is up to date. Explore our in-house brands like Metronaut, Anmi, and Denizen, to name
+                    a few, for carefully curated designs that are the talk of the town. Get ready to be spoiled for
+                    choice.Festivals, office get-togethers, weddings, brunches, or nightwear - Flipkart will have your
+                    back each time.</p>
+            </div>
+
+
+            <div>
+                <h5 class="e-font f-head">Home and Furniture</h5>
+                <p class="f-desc">Moving to a new place is never easy, especially if you're buying new furniture. Beds,
+                    sofa sets, dining tables, wardrobes, and TV units - it's not easy to set up everything again. With
+                    the hundreds of options thrown at you, the ride could be overwhelming. What place is reliable, what
+                    furniture will stand the test of time? These are questions you must ask before you choose a store.
+                    Well, our Durability Certified Furniture Store has not only curated a range of furniture keeping in
+                    mind the modern Indian consumer but furniture that comes with a lab certification, ensuring they
+                    last you for up to 10 years. Yes, all our furniture has gone through 35 stability and load tests so
+                    that you receive only the best-quality furniture. Be FurniSure, always. Names to look out for are
+                    Nilkamal, Godrej Interio, Urban Ladder, HomeTown, Durian and Perfect Homes.
+                    <br><br>
+                    You may have your furniture all set up, but they could end up looking flat and incomplete without
+                    complementary decor. Curtains, cushion covers, bed sheets, wall shelves, paintings, floor lamps -
+                    find
+                    everything that turns a house to an inviting home under one roof at Flipkart.
+                </p>
+            </div>
+
+
+            <div>
+                <h5 class="e-font f-head">Baby and Kids</h5>
+                <p class="f-desc">Your kids deserve only the best. From bodysuits, booties, diapers to strollers, if
+                    you're an expecting mother or a new mother, you will find everything you need to set sail on a
+                    smooth parenting journey with the help of our baby care collection. When it comes to safety, hygiene
+                    and comfort, you can rely on us without a second thought. Huggies, Pampers, MamyPoko, and Johnson &
+                    Johnson: we host only the most-trusted names in the business for your baby.</p>
+            </div>
+
+
+            <div>
+                <h5 class="e-font f-head">Grocery/Supermart</h5>
+                <p class="f-desc">Launching into the grocery vertical, Flipkart introduces Supermart that is out to
+                    bring everyday essentials close to you. From pulses, spices, dairy, personal and sanitary care,
+                    breakfast essentials, health drinks, spreads, ready to cook, grooming to cleaning agents, we are
+                    happy to present everything you need to run a house. Now buy Grocery products for as low as 1 Rupee
+                    only - our 1 Rupee Store presents new products every day for a nominal price of 1 Rupee only. Terms
+                    and conditions apply.</p>
+            </div>
+
+
+            <div>
+                <h5 class="e-font f-head">Books, Sports and Games</h5>
+                <p class="f-desc">Work hard and no play? We don't believe in that. Get access to best-selling fiction
+                    and non-fiction books by your favourite authors, thrilling English and Indian blockbusters,
+                    most-wanted gaming consoles, and a tempting range of fitness and sports gadgets and equipment bound
+                    to inspire you to get moving.</p>
+            </div>
+        </div>
+
+    </div>
+    <div class="row bottom">
+        <div class="col">
+            <p class="ftr-head">ABOUT</p>
+            <a href="" class="f-link">Contact Us</a>
+            <a href="" class="f-link">About Us</a>
+            <a href="" class="f-link">E-Deal Stories</a>
+            <a href="" class="f-link">Wholesale</a>
+            <a href="" class="f-link">Corporate Information</a>
+        </div>
+        <div class="col">
+            <p class="ftr-head">PAYMENT OPTIONS</p>
+            <a href="" class="f-link">Contact Us</a>
+            <a href="" class="f-link">About Us</a>
+            <a href="" class="f-link">E-Deal Stories</a>
+            <a href="" class="f-link">Wholesale</a>
+            <a href="" class="f-link">Corporate Information</a>
+        </div>
+        <div class="col">
+            <p class="ftr-head">POLICY</p>
+            <a href="" class="f-link">Contact Us</a>
+            <a href="" class="f-link">About Us</a>
+            <a href="" class="f-link">E-Deal Stories</a>
+            <a href="" class="f-link">Wholesale</a>
+            <a href="" class="f-link">Corporate Information</a>
+        </div>
+        <div class="col">
+            <p class="ftr-head">Mail Us:</p>
+            <span class="f-mail"> flipkart Internet Private Limited,</span>
+
+            <span class="f-mail"> Buildings Alyssa, Begonia &</span>
+
+            <span class="f-mail"> Clove Embassy Tech Village,</span>
+
+            <span class="f-mail"> Outer Ring Road, Devarabeesanahalli Village,</span>
+
+            <span class="f-mail"> Bengaluru, 560103,</span>
+
+            <span class="f-mail"> Karnataka, India</span>
+        </div>
+        <div class="col">
+            <p class="ftr-head">Registered Office Address:</p>
+            <span class="f-mail"> Flipkart Internet Private Limited,</span>
+
+            <span class="f-mail"> Buildings Alyssa, Begonia &</span>
+
+            <span class="f-mail"> Clove Embassy Tech Village,</span>
+
+            <span class="f-mail"> Outer Ring Road, Devarabeesanahalli Village,</span>
+
+            <span class="f-mail"> Bengaluru, 560103,</span>
+
+            <span class="f-mail"> Karnataka, India</span>
+
+            <span class="f-mail"> CIN : U51109KA2012PTC066107</span>
+
+            <span class="f-mail"> Telephone: 044-45614700</span>
+        </div>
+    </div>
+</div>
+<!-- <div class="row" id="tomar">
         <div class="col-lg-3 mx-auto" id="tomar1">
             <div class="list-group">
                 <h5 class="list-group-item category-btn" data-filter="all">All Products</h5>
@@ -27,15 +342,17 @@ y
                         {% if request.user.is_authenticated %}
                         {% if product|in_wishlist:request.user %}
 
-                        <i class="fa fa-heart wishlist" style="color:red" data-pid="{{product.id}}" data-toggle="tooltip" data-placement="top"
-                        aria-hidden="true" title="Remove from Wishlist"></i>
+                        <i class="fa fa-heart wishlist" style="color:red" data-pid="{{product.id}}"
+                            data-toggle="tooltip" data-placement="top" aria-hidden="true"
+                            title="Remove from Wishlist"></i>
                         {% else %}
-                            <i class="fa fa-heart wishlist" data-pid="{{product.id}}" data-toggle="tooltip" data-placement="top"
-                              aria-hidden="true" title="Add to Wishlist"></i>
-                              {% endif %}
+                        <i class="fa fa-heart wishlist" data-pid="{{product.id}}" data-toggle="tooltip"
+                            data-placement="top" aria-hidden="true" title="Add to Wishlist"></i>
+                        {% endif %}
 
-                            {% endif %}
-                        <img src="{{product.image.url}}" style="height:150px; width: 150px;" class="card-img-top" alt="...">
+                        {% endif %}
+                        <img src="{{product.image.url}}" style="height:150px; width: 150px;" class="card-img-top"
+                            alt="...">
                         <div class="card-body">
                             <p class="card-title target">{{product.name}} </p>
                             <p class="card-text"><b>$ {{product.price}}</b></p>
@@ -60,22 +377,22 @@ y
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
 <!-- SignUP Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Please SignUP here...!</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Please Sign UP here...!</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form>
                     {% csrf_token %}
                     {{form|crispy}}
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="signup">SignUP</button>
+                    <div class="ptp">
+                        <button class="grn" id="signup">Sign UP</button>
                     </div>
                 </form>
             </div>
@@ -83,39 +400,5 @@ y
     </div>
 </div>
 
-<!-- Login Modal -->
-
-<div class="modal fade" id="loginmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Please Login here...!</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="{% url 'store:login' %}" method="POST">
-                    {% csrf_token %}
-
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Email:</label>
-                        <input required type="email" name="email" id="recipient-name"
-                            class=" form-control-sm form-control" placeholder="example@gmail.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="">Password</label>
-                        <input type="password" name="password" id="" class="form-control form-control-sm"
-                            placeholder="********">
-                    </div>
-
-                    <div class="row">
-                        <div class="form-group col-md-3">
-                            <input class="btn btn-sm btn-info" type="submit" value="Login">
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 {% endblock %}

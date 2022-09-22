@@ -1,0 +1,118 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load cart_tag %}
+{% load cart_filter %}
+
+{% block content %}
+<div class="container-fuild">
+    <div id="pd-image">
+        <img src="{{product.image.url}}" class="pd-img" alt="">
+        <hr class="line">
+        <div class="row pd-footer">
+            <div class="col pd-btn" id="pd-atc-btn">
+                <i class="fa fa-shopping-cart add-to-cart" data-pid="{{product.id}}" aria-hidden="true">
+                    ADD TO CART</i>
+            </div>
+            <div class="col pd-btn" id="pd-bn-btn">
+                <i class="fa fa-shopping-cart buy-now" data-pid="{{product.id}}" aria-hidden="true">
+                    BUY NOW</i>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="pd-desc">
+        <div>
+            <h4>{{product.name}} <img src="{% static 'images/fa.jpg' %}" id="fa-logo" alt=""></h4>
+
+            <p>{{product.specifications}}</p>
+            <h3><b>₹ {{product.price}}</b></h3>
+            <p class="warning">Hurry, Only a few left!</p>
+            <h6 class="hl">Descriptions</h6>
+            <p>{{product.description}}</p>
+
+            <h6 class="hl">Highlights</h6>
+            <ul>
+                <li>{{product.highlight1}}</li>
+                <li>{{product.highlight2}}</li>
+                <li>{{product.highlight3}}</li>
+                <li>{{product.highlight4}}</li>
+            </ul>
+            <h6 class="hl">Seller</h6>
+            <p id="seller">{{product.user.first_name}} {{product.user.last_name}}</p>
+            <h6 class="hl">Payment Options</h6>
+
+            <ul>
+                <li>Cash On Delivery</li>
+                <li>UPI</li>
+                <li>Net Banking</li>
+            </ul>
+            <h5>Warranty</h5>
+            <p><span class="war-desc">Warranty Summary</span>{{product.war_summary}}</p>
+            <p><span class="war-desc">Warranty Service Type</span>{{product.war_service_type}}</p>
+            <p><span class="war-desc">Covered in Warranty</span>{{product.covered_in}}</p>
+            <p><span class="war-desc">Not Covered in Warranty</span>{{product.not_covered_in}}</p>
+            <p><span class="war-desc">Domestic Warranty</span>{{product.domestic_war}}</p>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+<!-- Address Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Address</h5>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'store:payment' %}" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="mobile-number" class="col-form-label">Mobile Number*</label>
+                        <input type="text" class="form-control address" name="mobile" id="mobile-number"
+                            placeholder="Mobile">
+                        <p id="mobile-error" style="display: none;"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="col-form-label">Address*</label>
+                        <input type="text" class="form-control address" name="address" id="address"
+                            placeholder="House No. / street">
+                        <p id="address-error" style="display: none;"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="city" class="col-form-label">City*</label>
+                        <input type="text" class="form-control address" name="city" id="city" placeholder="City">
+                        <p id="city-error" style="display: none;"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="state" class="col-form-label">State*</label>
+                            <input type="text" class="form-control address" name="state" id="state" placeholder="State">
+                            <p id="state-error" style="display: none;"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="zip-code" class="col-form-label">Zip Code*</label>
+                            <input type="text" class="form-control address" name="zip_code" id="zip-code"
+                                placeholder="Zip Code">
+                            <p id="zip-error" style="display: none;"></p>
+                        </div>
+                    </div>
+                    <div class="po-div">
+                        <button type="submit" id="proceed-to-pay">CONTINUE
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

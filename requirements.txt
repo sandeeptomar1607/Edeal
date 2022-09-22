@@ -1,0 +1,10 @@
+black
+Django
+django-crispy-forms
+django-shopping-cart
+isort
+Pillow
+psycopg2
+pytz
+razorpay
+python-decouple==3.6

@@ -1,8 +1,8 @@
 import datetime
-import json
 
 import pytz
 import razorpay
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.sites.shortcuts import get_current_site
@@ -16,11 +16,33 @@ from edeal import settings
 
 from .cart import *
 from .forms import SignupForm
-from .models import Address, Category, Order, OrderLine, Product, User, Wishlist
+from .models import (
+    Address,
+    Category,
+    Coupon,
+    Order,
+    OrderLine,
+    Product,
+    SubCategory,
+    User,
+    Wishlist,
+)
+from .total import *
 
 IST = pytz.timezone("Asia/Kolkata")
 
 # Create your views here.
+class CustomLoginRequiredMixin(LoginRequiredMixin):
+
+    permission_denied_message = "You have to be logged in to access that page"
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.add_message(
+                request, messages.WARNING, self.permission_denied_message
+            )
+            return self.handle_no_permission()
+        return super(CustomLoginRequiredMixin, self).dispatch(request, *args, **kwargs)
 
 
 class Home(View):
@@ -29,12 +51,35 @@ class Home(View):
     """
 
     def get(self, request):
+        cat_id = request.GET.get("category")
+        sub_cat_id = request.GET.get("sub_cat")
+
         categories = Category.objects.all()
         products = Product.objects.all()
+        sub_categories = SubCategory.objects.all()
         form = SignupForm()
 
-        context = {"categories": categories, "products": products, "form": form}
+        if cat_id:
+            category = Category.objects.get(id=cat_id)
+            products = Product.objects.filter(category=category)
+            context = {"category": category, "products": products}
+            return render(request, "store/category1.html", context)
+        elif sub_cat_id:
+            sub_cat = SubCategory.objects.get(id=sub_cat_id)
+            products = Product.objects.filter(sub_category=sub_cat)
+            brands = []
+            for p in products:
+                if p.brand not in brands:
+                    brands.append(p.brand)
+            context = {"products": products, "brands": brands}
+            return render(request, "store/category1.html", context)
 
+        context = {
+            "categories": categories,
+            "sub_categories": sub_categories,
+            "products": products,
+            "form": form,
+        }
         return render(request, "store/home.html", context)
 
 
@@ -78,15 +123,50 @@ class LoginView(View):
 
         if user is not None:
             login(request, user)
-            if user.role == "vender":
-                return redirect("store:venderHome")
-
-            if user.role == "customer":
-                # import pdb;pdb.set_trace()
-                return redirect("store:home")
+            return JsonResponse(data={"role": user.role}, status=200)
 
         else:
-            return redirect("store:login")
+            message = "Email or Password is incorrect."
+            return JsonResponse(data={"message": message}, status=400)
+
+
+class Profile(CustomLoginRequiredMixin, View):
+    login_url = settings.login_url
+    permission_denied_message = "Please login to view your profile"
+
+    def get(self, request):
+        return render(request, "store/profile.html")
+
+    def post(self, request):
+        user = request.user
+        l_name = request.POST.get("last_name")
+        f_name = request.POST.get("first_name")
+        email = request.POST.get("email")
+        mobile = request.POST.get("mobile")
+        if f_name or l_name:
+            user.first_name = f_name
+            user.last_name = l_name
+
+        if email:
+            user.email = email
+
+        if mobile:
+
+            user.mobile = mobile
+        user.save()
+
+        if user:
+            message = "Product added successfully."
+
+            return JsonResponse(
+                data={
+                    "f_name": request.user.first_name,
+                    "l_name": request.user.last_name,
+                },
+                status=200,
+            )
+        else:
+            return JsonResponse({"message": "failed"}, status=400)
 
 
 def userLogout(request):
@@ -98,10 +178,17 @@ def userLogout(request):
     return redirect("store:home")
 
 
-class AddProduct(LoginRequiredMixin, View):
+class ProductDetail(View):
+    def get(self, request, pk=None):
+        product = Product.objects.get(id=pk)
+        context = {"product": product}
+        return render(request, "store/product.html", context)
+
+
+class AddProduct(CustomLoginRequiredMixin, View):
 
     login_url = settings.login_url
-
+    permission_denied_message = "Please login to add your products"
     """
     AddProduct View: Vender can add their prodcut on E-Deal.
 
@@ -131,13 +218,13 @@ class AddProduct(LoginRequiredMixin, View):
             return JsonResponse({"message": "failed"}, status=400)
 
 
-class DeleteProduct(LoginRequiredMixin, View):
+class DeleteProduct(CustomLoginRequiredMixin, View):
 
     login_url = settings.login_url
+    permission_denied_message = "Please login to delete your products"
 
     """
     Delete Product View: Vender can delete their products from E-Deal.
-
     """
 
     def post(self, request):
@@ -145,13 +232,110 @@ class DeleteProduct(LoginRequiredMixin, View):
         product = Product.objects.get(pk=id)
         product.delete()
         return JsonResponse(data={"message": "Data deleted successfully"}, status=200)
+        
+
+class CouponView(View):
+    def get(self, request):
+        context = {"coupons": Coupon.objects.all()}
+        return render(request, "store/coupon.html", context)
+
+    def post(self, request):
+        id = request.POST.get("id")
+        coupon = Coupon.objects.get(id=id)
+        cart_amount = total(request)
+
+        if coupon.coupon_type == "min":
+            if cart_amount >= coupon.min:
+                if coupon.discount_type == "in_rupees":
+                    discount = coupon.discount
+                else:
+                    discount = (cart_amount * coupon.discount) / 100
+            else:
+                discount = 0
+
+        elif coupon.coupon_type == "category":
+            discounted_amount = pro_category(request, coupon.category)
+
+            if coupon.discount_type == "in_rupees":
+                if discounted_amount == 0:
+                    discount = 0
+                else:
+                    discount = coupon.discount
+            else:
+                if coupon.upto:
+                    if coupon.upto < (discounted_amount * coupon.discount) / 100:
+                        discount = coupon.upto
+                    else:
+                        discount = (discounted_amount * coupon.discount) / 100
+                else:
+                    discount = (discounted_amount * coupon.discount) / 100
+
+        elif coupon.coupon_type == "sub_cat":
+            discounted_amount = pro_sub_category(request, coupon.sub_cat)
+
+            if coupon.discount_type == "in_rupees":
+                if discounted_amount == 0:
+                    discount = 0
+                else:
+                    discount = coupon.discount
+
+            else:
+                if coupon.upto:
+                    if coupon.upto < (discounted_amount * coupon.discount) / 100:
+                        discount = coupon.upto
+                    else:
+                        discount = (discounted_amount * coupon.discount) / 100
+                else:
+                    discount = (discounted_amount * coupon.discount) / 100
+
+        elif coupon.coupon_type == "brand":
+            discounted_amount = pro_brand(request, coupon.brand)
+
+            if coupon.discount_type == "in_rupees":
+                if discounted_amount == 0:
+                    discount = 0
+                else:
+                    discount = coupon.discount
+
+            else:
+                if coupon.upto:
+                    if coupon.upto < (discounted_amount * coupon.discount) / 100:
+                        discount = coupon.upto
+                    else:
+                        discount = (discounted_amount * coupon.discount) / 100
+                else:
+                    discount = (discounted_amount * coupon.discount) / 100
+
+        elif coupon.coupon_type == "product":
+            discounted_amount = prod(request, coupon.product)
+
+            if coupon.discount_type == "in_rupees":
+                if discounted_amount == 0:
+                    discount = 0
+                else:
+                    discount = coupon.discount
+            else:
+                if coupon.upto:
+                    if coupon.upto < (discounted_amount * coupon.discount) / 100:
+                        discount = coupon.upto
+                    else:
+                        discount = (discounted_amount * coupon.discount) / 100
+                else:
+                    discount = (discounted_amount * coupon.discount) / 100
+
+        return JsonResponse(
+            data={"discount": discount, "message": "Applied successfully"},
+            status=200,
+        )
 
 
 " Razorpay client object"
 client = razorpay.Client(auth=(settings.razorpay_id, settings.razorpay_account_id))
 
 
-class PaymentView(View):
+class PaymentView(CustomLoginRequiredMixin, View):
+    login_url = settings.login_url
+    permission_denied_message = "Access denied. Please login...!"
     """
     Payment View: When a Customer make a payment, their address will be saved. An order will be created and redirect to Rajorpay payment.
     """
@@ -162,6 +346,7 @@ class PaymentView(View):
         city = request.POST.get("city")
         state = request.POST.get("state")
         zip = request.POST.get("zip_code")
+        discount = request.POST.get("discount")
         user = request.user
 
         address = Address.objects.create(
@@ -170,8 +355,8 @@ class PaymentView(View):
 
         cart = Cart(request)
         today = datetime.datetime.now(IST)
-        final_price = 0
-        order = Order.objects.create(user=user, date=today, amount=final_price)
+        sub_total = 0
+        order = Order.objects.create(user=user, date=today, amount=sub_total)
         all_orderlines = []
         for product in cart.cart.values():
             quantity = int(product.get("quantity"))
@@ -181,7 +366,9 @@ class PaymentView(View):
             all_orderlines.append(
                 OrderLine(user=user, order=order, product_id=product, quantity=quantity)
             )
-            final_price += price * quantity
+
+            sub_total += price * quantity
+        final_price = sub_total - float(discount)
         orderline = OrderLine.objects.bulk_create(all_orderlines)
 
         order.amount = final_price
@@ -199,6 +386,8 @@ class PaymentView(View):
         cart.clear()
         orderlines = OrderLine.objects.filter(order=order)
         context = {
+            "sub_total": sub_total,
+            "discount": discount,
             "order": order,
             "order_id": razorpay_order["id"],
             "final_price": final_price,
@@ -239,11 +428,14 @@ def handlerequest(request):
             return render(request, "store/failed.html")
 
 
-class OrderView(View):
-    # login_url = settings.login_url
+class OrderView(CustomLoginRequiredMixin, View):
+
     """
     Order View: Shows all order of the authenticated Customer.
     """
+
+    login_url = settings.login_url
+    permission_denied_message = "Please login to view your orders"
 
     def get(self, request):
         orders = Order.objects.filter(user=request.user)
@@ -256,7 +448,9 @@ class OrderView(View):
         return render(request, "store/order.html", context)
 
 
-class AddToWishlist(View):
+class AddToWishlist(CustomLoginRequiredMixin, View):
+    login_url = settings.login_url
+    permission_denied_message = "Please login to add product to your wishlist"
     """
     Add to wishlist View: Add Products to customer's wishlist.
     """
@@ -271,7 +465,9 @@ class AddToWishlist(View):
         )
 
 
-class RemoveFromWishlist(View):
+class RemoveFromWishlist(CustomLoginRequiredMixin, View):
+    login_url = settings.login_url
+    permission_denied_message = "Please login to remove product from wishlist."
     """
     Remove Products: Remove products from the customer's wihslist.
     """
@@ -280,7 +476,6 @@ class RemoveFromWishlist(View):
         id = request.GET.get("pid")
         wishlist = Wishlist.objects.filter(Q(user=request.user) & Q(product_id=id))
         wishlist.delete()
-        # Wishlist.objects.get(product_id=id).delete()
         in_wishlist = Wishlist.objects.filter(user=request.user).count()
         return JsonResponse(
             data={"message": "Data deleted successfully", "in_wishlist": in_wishlist},
@@ -288,8 +483,9 @@ class RemoveFromWishlist(View):
         )
 
 
-class WishlistView(LoginRequiredMixin, View):
+class WishlistView(CustomLoginRequiredMixin, View):
     login_url = settings.login_url
+    permission_denied_message = "Please login to view your wishlist"
 
     """
     Wishlist: Shows all products which are added to the customer's wishlist.
@@ -298,33 +494,4 @@ class WishlistView(LoginRequiredMixin, View):
     def get(self, request):
         wishlists = Wishlist.objects.filter(user=request.user)
         context = {"wishlists": wishlists}
-        return render(request, "store/wishlist.html", context)
-
-
-class UpdateProduct(View):
-    # def get(self,request,pk=None):
-    def get(self, request):
-
-        id = request.GET.get("pid")
-        product = Product.objects.get(pk=id)
-        print("================", product.price)
-
-        # return render(request,'store/venderHome.html',{'product': product, 'msg':"success"})
-
-        # class UpdateProduct(View):
-        #     def post(self, request):
-        #         id = request.POST.get('pid')
-        #         product = Product.objects.get(pk=id)
-        #         # import pdb; pdb.set_trace()
-
-        #         image = json.dumps(str(product.image))
-
-        product_data = {
-            "id": product.id,
-            "category": product.category.name,
-            "name": product.name,
-            "price": product.price,
-            "description": product.description,
-        }
-
-        return JsonResponse(product_data)
+        return render(request, "store/wishlist1.html", context)

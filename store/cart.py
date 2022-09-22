@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 
-from store.models import Product
+from store.models import Coupon, Product
 
 
 def cart_add(request):
@@ -94,5 +94,6 @@ def cart_detail(request):
         price = float(product.get("price"))
         cart_amount += price * quantity
     product_in_cart = len(cart.cart)
-    context = {"product_in_cart": product_in_cart, "cart_amount": cart_amount}
-    return render(request, "store/cart_detail.html", context)
+    coupons = Coupon.objects.all()
+    context = {"product_in_cart": product_in_cart, "cart_amount": cart_amount, 'coupons': coupons}
+    return render(request, "store/cart_details.html", context)

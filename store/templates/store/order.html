@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+{% if result %}
 
 <div class="container order-div">
     {% for order, orderlines in result.items %}
@@ -48,4 +49,22 @@
     {% endfor %}
 
 </div>
+{% else %}
+<script>    
+    Swal.fire({
+      title: '<strong>You have no orders.</strong>',
+      icon: 'info',
+      html:
+        ' Start shopping !',
+
+      focusConfirm: false,
+     
+      
+    })
+
+    document.querySelector(".swal2-confirm").addEventListener("click", function() {
+      window.location.href='http://127.0.0.1:8000/';
+});
+  </script>
+  {% endif %}
 {% endblock %}

@@ -7,14 +7,17 @@ from .views import (
     DeleteProduct,
     Home,
     LoginView,
+    Profile,
     OrderView,
     PaymentView,
     RemoveFromWishlist,
     SignUp,
-    UpdateProduct,
     WishlistView,
     userLogout,
     venderHome,
+    ProductDetail,
+    CouponView,
+
 )
 
 app_name = "store"
@@ -24,10 +27,12 @@ urlpatterns = [
     path("venderHome/", venderHome.as_view(), name="venderHome"),
     path("signup/", SignUp.as_view(), name="signup"),
     path("login/", LoginView.as_view(), name="login"),
+    path('profile/', Profile.as_view(), name='profile'),
     path("logout/", userLogout, name="logout"),
+    path("product/<int:pk>/", ProductDetail.as_view(), name="product"),
     path("addproduct/", AddProduct.as_view(), name="addproduct"),
     path("deleteproduct/", DeleteProduct.as_view(), name="deleteproduct"),
-    path("updateproduct/", UpdateProduct.as_view(), name="updateproduct"),
+    path("coupon/",CouponView.as_view(), name="coupon"),
     # Cart urls
     path("add/", views.cart_add, name="add"),
     path("item_clear/", views.item_clear, name="item_clear"),

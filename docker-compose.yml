@@ -1,0 +1,28 @@
+version: "3.9"
+   
+services:
+  db:
+    image: postgres
+    env_file:
+      - .env
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - "5432"
+
+    restart: always
+
+  web:
+    build: .
+    volumes:
+      - .:/edeal
+    command: sh -c "python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=db
+      - POSTGRES_NAME=edeal_db
+      - POSTGRES_USER=postgres
+      - PASSWORD=developer
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db

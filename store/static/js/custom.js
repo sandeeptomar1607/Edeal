@@ -5,6 +5,7 @@
     buttons.forEach((button) => {
         button.addEventListener('click', (e) => {
             const filter = e.target.dataset.filter
+            console.log(filter)
 
             storeProducts.forEach((item) => {
                 if (filter == 'all') {
@@ -21,6 +22,46 @@
     })
 
 })();
+
+
+const search = () => {
+    const searchbox = document.getElementById("search").value.toUpperCase();
+    const product = document.querySelectorAll(".s-product")
+    const pname = document.getElementsByClassName("dropdown-item")
+
+    for (var i = 0; i < pname.length; i++) {
+        let match = pname[i];
+        if (match) {
+            let textvalue = match.textContent || match.innerHTML
+
+            if (textvalue.toUpperCase().indexOf(searchbox) > -1) {
+                product[i].style.display = "block";
+            } else {
+                product[i].style.display = "none";
+            }
+        }
+    }
+
+}
+
+
+// Product scroller
+$(document).on('click', '.left', function () {
+    left = $(this).closest('.scroll-images');
+    left.scrollLeft(-50)
+    // if (left.scrollLeft() == 0) {
+    //     $(this).fadeOut()
+    // }
+})
+$(document).on('click', '.right', function () {
+    right = $(this).closest('.scroll-images');
+    right.scrollLeft(50)
+    // if (right.scrollLeft() == 0) {
+    //     $(this).fadeOut()
+
+    // }
+})
+
 
 
 // SignUp 
@@ -99,28 +140,6 @@ $(document).on("click", '.i-del', function () {
 })
 
 
-// Update Product
-$(document).on("click", ".i-edit", function () {
-
-    let id = $(this).attr("data-pid");
-    myData = { pid: id }
-    $.ajax({
-        url: "/updateproduct/",
-        method: "GET",
-        data: myData,
-        success: function (data) {
-            $('#pro-category').find(":selected").text(data.category);
-            $('#pro-name').val(data.name)
-            $('#pro-price').val(data.price)
-            $('#pro-desc').val(data.description)
-            image = $('#id_image').val(data.image)
-            console.log(image)
-
-        }
-    })
-})
-
-
 // Add To Cart
 $(document).on('click', '.add-to-cart', function () {
     let id = $(this).attr("data-pid");
@@ -131,14 +150,35 @@ $(document).on('click', '.add-to-cart', function () {
         method: "GET",
         data: myData,
         success: function (data) {
-            $('#nav-cart').text(data.product_in_cart)
-            $(myThis).text("Added to cart")
-            $(myThis).closest('.footer').css('background-color', 'rgb(12, 150, 12)')
+            $('#nav-cart').text("(" + data.product_in_cart + ")")
+            $('#nav-cart').css('color', 'rgb(240, 92, 92)')
+            $(myThis).text(" Added To Cart")
+            $(myThis).closest('.pro-add').css('background-color', 'rgb(6, 143, 6)')
         },
         error: function (error) {
             console.log("failed")
         }
 
+    })
+})
+
+
+// Buy Now
+$(document).on('click', '.buy-now', function () {
+    let id = $(this).attr("data-pid");
+    myThis = this
+    myData = { pid: id }
+    $.ajax({
+        url: "/add/",
+        method: "GET",
+        data: myData,
+        success: function (data) {
+            $('#nav-cart').text("(" + data.product_in_cart + ")")
+            window.location = '/cart-detail/';
+        },
+        error: function (error) {
+            console.log("failed")
+        }
     })
 })
 
@@ -168,7 +208,6 @@ $(document).on('click', '.increment', function () {
         error: function (error) {
             console.log("failed")
         }
-
     })
 })
 
@@ -198,7 +237,6 @@ $(document).on('click', '.decrement', function () {
         error: function (error) {
             console.log("failed")
         }
-
     })
 })
 
@@ -215,9 +253,10 @@ $(document).on('click', '.item-del', function () {
         method: "GET",
         data: myData,
         success: function (data) {
-            $('#nav-cart').text(data.product_in_cart)
-            $(myThis).closest('.cart-div').fadeOut()
+            $('#nav-cart').text("(" + data.product_in_cart + ")")
+            $('#nav-cart').css('color', 'rgb(240, 92, 92)')
 
+            $(myThis).closest('.cart-div').fadeOut()
         },
         error: function (error) {
             console.log("failed")
@@ -230,25 +269,20 @@ $(document).on('click', '.item-del', function () {
 $("#proceed-to-pay").click(function () {
 
     mobile = $('#mobile-number').val()
+    console.log($.type((mobile)))
     address = $('#address').val()
     city = $('#city').val()
     state = $('#state').val()
     zip = $('#zip-code').val()
+    console.log(mobile)
     var csrftoken = $('input[name=csrfmiddlewaretoken]').val()
 
-    if (mobile == "") {
-        $('#mobile-error').text(" *mobile Number can not be empty")
-        $('#mobile-error').css({ "display": "block", "color": "red", "font-size": '70%' });
-    } else {
-        $('#mobile-error').css({ "display": "none" });
-    }
 
     if (address == "") {
         $('#address-error').text(" *address can not be empty")
         $('#address-error').css({ "display": "block", "color": "red", "font-size": '70%' });
     } else {
         $('#address-error').css({ "display": "none" });
-
     }
 
     if (city == "") {
@@ -272,23 +306,28 @@ $("#proceed-to-pay").click(function () {
         $('#zip-error').css({ "display": "none" });
     }
 
-    // myData = { mobile: mobile, address: address, city: city, mobile: mobile, state: state, zip_code: zip, csrfmiddlewaretoken: csrftoken };
 
-    // $.ajax({
-    //     url: "/payment/",
-    //     method: "POST",
-    //     data: myData,
-    //     dataType: "json",
-    //     success: function (data) {
-    //         $('#cart-change').html("<p>test</p>")
-    //         console.log("success", data)
-    //     return false;
-    //     },
-    //     error: function (error) {
-    //         alert('error; ' + eval(error));
-    //     }
-    // })
+    if (mobile == "") {
+        $('#mobile-error').text("*mobile Number can not be empty")
+        $('#mobile-error').css({ "display": "block", "color": "red", "font-size": '70%' });
 
+    } else if ((mobile.length != 10)) {
+        $('#proceed-to-pay').removeAttr("type").attr("type", "button");
+        $('#mobile-error').text("*Invalid Mobile Number")
+        $('#mobile-error').css({ "display": "block", "color": "red", "font-size": '70%' });
+        return false;
+
+    } else {
+        $('#proceed-to-pay').removeAttr("type").attr("type", "submit");
+        $('#mobile-error').css({ "display": "none" });
+    }
+
+    if ((mobile == "") || (address == "") || (city == "") || (state == "") || (zip == "")) {
+        $('#proceed-to-pay').removeAttr("type").attr("type", "button");
+    } else {
+        $('#proceed-to-pay').removeAttr("type").attr("type", "submit");
+
+    }
 })
 
 
@@ -307,18 +346,13 @@ $(document).on('click', '.wishlist', function () {
             method: "GET",
             data: myData,
             success: function (data) {
-                $(myThis).css("color", "black")
+                $(myThis).css("color", "gray")
                 $('#nav-wishlist').text(data.in_wishlist)
-
             },
-
             error: function (error) {
                 console.log("failed")
             }
-
         })
-
-
     }
     else {
         $.ajax({
@@ -334,7 +368,6 @@ $(document).on('click', '.wishlist', function () {
             error: function (error) {
                 console.log("failed")
             }
-
         })
     }
 })
@@ -375,3 +408,239 @@ $(document).on('click', '.wishlist-cart', function () {
 })
 
 
+$('#login-btn').click(function () {
+    email = $('#email-id').val()
+    pass = $('#pass-id').val()
+    var csrftoken = $('input[name=csrfmiddlewaretoken]').val()
+
+    if (email == "") {
+        $('#email-error').text("*Email is required.")
+        $('#email-error').css({ "display": "block", "color": "red", "font-size": '70%' });
+    } else {
+        $('#email-error').css({ "display": "none" });
+    }
+
+    if (pass == "") {
+        $('#pass-error').text("*Enter password")
+        $('#pass-error').css({ "display": "block", "color": "red", "font-size": '70%' });
+    } else {
+        $('#pass-error').css({ "display": "none" });
+    }
+
+    if ((email != "") && (pass != "")) {
+
+        myData = { email: email, password: pass, csrfmiddlewaretoken: csrftoken }
+        $.ajax({
+            url: "/login/",
+            method: "POST",
+            data: myData,
+            success: function (data) {
+                if (data.role == 'vender') {
+                    window.location = '/venderHome/';
+                }
+                else if (data.role == 'customer') {
+                    window.location = '/';
+                }
+            },
+
+            error: function (error) {
+                $('#login-error').text("Email or Password is incorrect.")
+                $('#login-error').css({ "display": "block" });
+
+            }
+
+        })
+    }
+
+})
+
+
+
+// Update First name and Last Name
+$('#p-edit').click(function () {
+    update_btn = $(this).text()
+    if (update_btn == "Edit") {
+        $(this).text("Cancel")
+        $('.pi').removeAttr("readonly")
+        $('#save-pi').css({ "display": "block" })
+    }
+    else {
+        $(this).text("Edit")
+        $('.pi').attr("readonly", "true")
+        $('#save-pi').css({ "display": "none" })
+
+    }
+})
+
+$('#save-pi').click(function () {
+    f_name = $('#f-name').val()
+    l_name = $('#l-name').val()
+    var csrftoken = $('input[name=csrfmiddlewaretoken]').val()
+
+    if (f_name == "") {
+        $('#f-edit-error').text(" *Required")
+        $('#f-edit-error').css({ "display": "block", "color": "red", "font-size": '70%' });
+    } else if (l_name == "") {
+        $('#l-edit-error').text(" *Required")
+        $('#l-edit-error').css({ "display": "block", "color": "red", "font-size": '70%' });
+    }
+    else {
+        myData = { first_name: f_name, last_name: l_name, csrfmiddlewaretoken: csrftoken }
+        $.ajax({
+            url: "/profile/",
+            method: "POST",
+            data: myData,
+            success: function (data) {
+                $("#p-edit").text("Edit")
+                $('.pi').attr("readonly", "true")
+                $('#save-pi').css({ "display": "none" })
+                $('#r-user').text(data.f_name + " " + data.l_name)
+                $('#f-edit-error').css({ "display": "none" });
+                $('#l-edit-error').css({ "display": "none" });
+
+
+            },
+
+            error: function (error) {
+                console.log('not')
+
+            }
+
+        })
+    }
+})
+
+
+// Update Email address
+$('#e-edit').click(function () {
+    update_btn = $(this).text()
+    if (update_btn == "Edit") {
+        $(this).text("Cancel")
+        $('#p-email').removeAttr("readonly")
+        $('#save-email').css({ "display": "block" })
+    }
+    else {
+        $(this).text("Edit")
+        $('#p-email').attr("readonly", "true")
+        $('#save-email').css({ "display": "none" })
+
+    }
+})
+
+
+$('#save-email').click(function () {
+    email = $('#p-email').val()
+    var csrftoken = $('input[name=csrfmiddlewaretoken]').val()
+
+    if (email == "") {
+        $('#e-edit-error').text(" *Email can't be empty")
+        $('#e-edit-error').css({ "display": "block", "color": "red", "font-size": '70%' });
+    }
+    else {
+        myData = { email: email, csrfmiddlewaretoken: csrftoken }
+        $.ajax({
+            url: "/profile/",
+            method: "POST",
+            data: myData,
+            success: function (data) {
+                $("#e-edit").text("Edit")
+                $('#p-email').attr("readonly", "true")
+                $('#save-email').css({ "display": "none" })
+                $('#e-edit-error').css({ "display": "none" });
+                console.log("updated")
+            },
+
+            error: function (error) {
+                console.log('not')
+
+            }
+
+        })
+    }
+})
+
+
+
+// Update Mobile Number
+$('#m-edit').click(function () {
+    update_btn = $(this).text()
+    if (update_btn == "Edit") {
+        $(this).text("Cancel")
+        $('#p-mobile').removeAttr("readonly")
+        $('#save-mobile').css({ "display": "block" })
+    }
+    else {
+        $(this).text("Edit")
+        $('#p-mobile').attr("readonly", "true")
+        $('#save-mobile').css({ "display": "none" })
+
+    }
+})
+
+
+$('#save-mobile').click(function () {
+    mobile = $('#p-mobile').val()
+
+    var csrftoken = $('input[name=csrfmiddlewaretoken]').val()
+    if (mobile == "") {
+        $('#m-edit-error').text(" *Mobile No. can't be empty")
+        $('#m-edit-error').css({ "display": "block", "color": "red", "font-size": '70%' });
+    } else if (mobile.length != 10) {
+        $('#m-edit-error').text(" *Mobile No. must be 10 digit long")
+        $('#m-edit-error').css({ "display": "block", "color": "red", "font-size": '70%' });
+    }
+    else {
+        myData = { mobile: mobile, csrfmiddlewaretoken: csrftoken }
+        $.ajax({
+            url: "/profile/",
+            method: "POST",
+            data: myData,
+            success: function (data) {
+                $("#m-edit").text("Edit")
+                $('#p-mobile').attr("readonly", "true")
+                $('#save-mobile').css({ "display": "none" })
+                $('#m-edit-error').css({ "display": "none" });
+
+                console.log("updated")
+            },
+
+            error: function (error) {
+                console.log('not')
+
+            }
+
+        })
+    }
+})
+
+
+// Apply coupon
+$(document).on('change', '.sel-coupon', function () {
+    coupon_id = $('.sel-coupon').val()
+    var csrftoken = $('input[name=csrfmiddlewaretoken]').val()
+
+    myData = { id: coupon_id, csrfmiddlewaretoken: csrftoken }
+
+    $.ajax({
+        url: "/coupon/",
+        method: "POST",
+        data: myData,
+        success: function (data) {
+            $('#cart-discount').val(data.discount);
+            if (data.discount == 0) {
+                $('#apply').css({ "display": "none" });
+
+                $('#not-apply').css({ "display": "block", "color": "red", "font-size": '70%' });
+            }
+            else {
+                $('#not-apply').css({ "display": "none" });
+
+                $('#apply').css({ "display": "block" });
+            }
+            console.log(data.discount)
+        },
+        error: function (error) {
+            console.log('not')
+        }
+    })
+})
