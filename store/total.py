@@ -74,3 +74,8 @@ def prod(request, pro):
             pass
 
     return discounted_amount
+
+
+
+
+git remote set-url origin https://sandeeptomar1607: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@github.com/sandeeptomar1607/git@github.com:sandeeptomar1607/Edeal.git
