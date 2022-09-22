@@ -61,15 +61,15 @@ def pro_brand(request, brand):
     return discounted_amount
 
 
-def prod(request, product):
+def prod(request, pro):
     cart = Cart(request)
     discounted_amount = 0
     for product in cart.cart.values():
         product_id = int(product.get("product_id"))
         try:
             product = Product.objects.get(id=product_id)
-            discounted_amount = product.price
-
+            if product == pro:
+                discounted_amount = product.price
         except:
             pass
 
